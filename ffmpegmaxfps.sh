@@ -1,7 +1,7 @@
 #!/bin/bash
 
-LOGDIR="/tmp/fpsmax/logs"
-TEMPDIR="/tmp/fpsmax/temp"
+LOGDIR="/tmp/ffmpeg_maxfps/logs"
+TEMPDIR="/tmp/ffmpeg_maxfps/temp"
 OUTPUT_EXT=".mkv"
 
 export LC_NUMERIC="C"
@@ -28,7 +28,9 @@ clear_temp() {
 }
 
 killall_procs() {
-	ls "$LOGDIR/" 2>/dev/null | xargs -n 1 kill 2>/dev/null
+	echo "Killing processes"
+	killall -9 $1 2>/dev/null
+	ls "$LOGDIR/" 2>/dev/null | xargs -n 1 kill -9 2>/dev/null
 }
 
 start_proc() {
@@ -52,7 +54,7 @@ aggregate_fps() {
 }
 
 perform_stress_test() {
-	killall_procs
+	killall_procs $COMMAND
 	sleep 2
 	clear_logs
 
@@ -65,25 +67,27 @@ perform_stress_test() {
 	prev_fps=0
 	count=0
 	while [ $prev_fps -le $fps ]; do
+		count=$((count + 1))
 		echo "Starting process $count"
 		( start_proc $COMMAND "$TEMPDIR/tmp$count$OUTPUT_EXT" ) 2>/dev/null 1>/dev/null &
 		
-		sleep 5
+		sleep 2
 		
 		prev_fps=$fps
 		fps=$( aggregate_fps )
 		echo "Total FPS=$fps"
-		count=$((count + 1))
+		clear_logs
 	done
 
-	if [ $count -gt 2 ]; then
-		count=$((count - 2))
+	if [ $count -gt 0 ]; then
+		count=$((count - 1))
 	fi
 
 	echo "The ideal # of processes is: $count"
 
-	killall_procs
-	sleep 5
+	sleep 3
+	killall_procs $COMMAND
+	sleep 2
 	clear_logs
 	clear_temp
 }
