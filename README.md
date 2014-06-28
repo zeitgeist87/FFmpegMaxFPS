@@ -9,14 +9,14 @@ jobs per server.
 ## Usage
 
 ```
-Usage: ffmpegmaxfps.sh [-L <LOGDIR>] [-T <TEMPDIR>] [-O <EXTENSION>]
+Usage: ffmpegmaxfps.sh [-L <LOGDIR>] [-T <TEMPDIR>]
 	[run|stresstest|printfps] COMMAND
 ```
 
 ## Sample Output
 
 ```
-sh ffmpegmaxfps.sh stresstest ffmpeg -i sample.mp4 -vcodec libx264 -crf 27 -acodec copy
+sh ffmpegmaxfps.sh stresstest ffmpeg -i sample.mp4 -vcodec libx264 -crf 27 -acodec copy out.mkv
 Killing processes
 Performing stress test
 Starting process 1

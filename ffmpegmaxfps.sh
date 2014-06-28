@@ -2,12 +2,11 @@
 
 LOGDIR="/tmp/ffmpeg_maxfps/logs"
 TEMPDIR="/tmp/ffmpeg_maxfps/temp"
-OUTPUT_EXT=".mkv"
 
 export LC_NUMERIC="C"
 
 usage() {
-	echo -e "Usage: $0 [-L <LOGDIR>] [-T <TEMPDIR>] [-O <EXTENSION>]\n\t[run|stresstest|printfps] COMMAND" 1>&2
+	echo -e "Usage: $0 [-L <LOGDIR>] [-T <TEMPDIR>]\n\t[run|stresstest|printfps] COMMAND" 1>&2
 	exit 1
 }
 
@@ -28,14 +27,17 @@ clear_temp() {
 }
 
 killall_procs() {
-	echo "Killing processes"
 	killall -9 $1 2>/dev/null
 	ls "$LOGDIR/" 2>/dev/null | xargs -n 1 kill -9 2>/dev/null
 }
 
 start_proc() {
 	mkdir -p "$LOGDIR"
-
+    mkdir -p "$TEMPDIR/tmp/$BASHPID/"
+    
+    OLDDIR="$(pwd)"
+    cd "$TEMPDIR/tmp/$BASHPID/"
+    
 	run "$@" | while read result
 	do 
 		echo "$result" > "$LOGDIR/$BASHPID"
@@ -46,7 +48,9 @@ start_proc() {
 		echo -n -e "frame = $frame, fps = $fps\r"
 	done
 
+    cd "$OLDDIR"
 	rm -f "$LOGDIR/$BASHPID"
+	rm -rf "$TEMPDIR/tmp/$BASHPID/"
 }
 
 aggregate_fps() {
@@ -69,7 +73,7 @@ perform_stress_test() {
 	while [ $prev_fps -le $fps ]; do
 		count=$((count + 1))
 		echo "Starting process $count"
-		( start_proc $COMMAND "$TEMPDIR/tmp$count$OUTPUT_EXT" ) 2>/dev/null 1>/dev/null &
+		( start_proc $COMMAND ) 2>/dev/null 1>/dev/null &
 		
 		sleep 2
 		
@@ -92,7 +96,7 @@ perform_stress_test() {
 	clear_temp
 }
 
-while getopts "hL:T:O" o; do
+while getopts "hL:T:" o; do
 	case "${o}" in
 		h)
 			usage
@@ -102,9 +106,6 @@ while getopts "hL:T:O" o; do
 			;;
 		T)
 			TEMPDIR=${OPTARG}
-			;;
-		O)
-			OUTPUT_EXT=${OPTARG}
 			;;
 		*)
 			usage
