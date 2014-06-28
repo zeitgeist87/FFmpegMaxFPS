@@ -17,16 +17,21 @@ Usage: ffmpegmaxfps.sh [-L <LOGDIR>] [-T <TEMPDIR>]
 
 ```
 sh ffmpegmaxfps.sh stresstest ffmpeg -i sample.mp4 -vcodec libx264 -crf 27 -acodec copy out.mkv
-Killing processes
-Performing stress test
-Starting process 1
+Performing stress test:
+############################
+Starting process #1
 Total FPS=31
-Starting process 2
-Total FPS=56
-Starting process 3
-Total FPS=66
-Starting process 4
-Total FPS=64
-The ideal # of processes is: 3
-Killing processes
+Starting process #2
+Total FPS=58
+Starting process #3
+Total FPS=63
+Starting process #4
+Total FPS=69
+Starting process #5
+Total FPS=79
+Starting process #6
+Total FPS=76
+############################
+
+The ideal # of processes is: 5
 ```

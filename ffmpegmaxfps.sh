@@ -65,14 +65,14 @@ perform_stress_test() {
 	mkdir -p "$TEMPDIR"
 	mkdir -p "$LOGDIR"
 
-	echo "Performing stress test"
+	echo -e "Performing stress test:\n############################"
 
 	fps=0
 	prev_fps=0
 	count=0
 	while [ $prev_fps -le $fps ]; do
 		count=$((count + 1))
-		echo "Starting process $count"
+		echo "Starting process #$count"
 		( start_proc $COMMAND ) 2>/dev/null 1>/dev/null &
 		
 		sleep 2
@@ -87,7 +87,7 @@ perform_stress_test() {
 		count=$((count - 1))
 	fi
 
-	echo "The ideal # of processes is: $count"
+	echo -e "############################\n\nThe ideal # of processes is: $count"
 
 	sleep 3
 	killall_procs $COMMAND
