@@ -33,11 +33,11 @@ killall_procs() {
 
 start_proc() {
 	mkdir -p "$LOGDIR"
-    mkdir -p "$TEMPDIR/tmp/$BASHPID/"
-    
-    OLDDIR="$(pwd)"
-    cd "$TEMPDIR/tmp/$BASHPID/"
-    
+	mkdir -p "$TEMPDIR/tmp/$BASHPID/"
+	
+	OLDDIR="$(pwd)"
+	cd "$TEMPDIR/tmp/$BASHPID/"
+	
 	run "$@" | while read result
 	do 
 		echo "$result" > "$LOGDIR/$BASHPID"
@@ -48,7 +48,7 @@ start_proc() {
 		echo -n -e "frame = $frame, fps = $fps\r"
 	done
 
-    cd "$OLDDIR"
+	cd "$OLDDIR"
 	rm -f "$LOGDIR/$BASHPID"
 	rm -rf "$TEMPDIR/tmp/$BASHPID/"
 }
@@ -65,7 +65,8 @@ perform_stress_test() {
 	mkdir -p "$TEMPDIR"
 	mkdir -p "$LOGDIR"
 
-	echo -e "Performing stress test:\n############################"
+	echo "Performing stress test:"
+	echo "############################"
 
 	fps=0
 	prev_fps=0
@@ -74,9 +75,9 @@ perform_stress_test() {
 		count=$((count + 1))
 		echo "Starting process #$count"
 		( start_proc $COMMAND ) 2>/dev/null 1>/dev/null &
-		
+
 		sleep 2
-		
+
 		prev_fps=$fps
 		fps=$( aggregate_fps )
 		echo "Total FPS=$fps"
@@ -87,7 +88,8 @@ perform_stress_test() {
 		count=$((count - 1))
 	fi
 
-	echo -e "############################\n\nThe ideal # of processes is: $count"
+	echo "############################"
+	echo -e "\nThe ideal # of processes is: $count"
 
 	sleep 3
 	killall_procs $COMMAND
